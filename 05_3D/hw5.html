@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>hw5</title>
+  </head>
+  <body>
+    <p>This animation aims to demonstrate magnus effect.</p>
+    <p>The phenomenon magnus effect occurs when a spinning object moves through a fluid (in this case: air)</p>
+    <p>A lift force acts on the object (in this case: soccer ball). This causes object to get deflected in a manner not present when it is not spinning</p>
+    <p>Orthogonal projection is used which may cause goalposts to look out of place</p>
+    <canvas id="cameraCanvas" width="1200" height="600" style="border:1px solid #888;"></canvas>
+    </br>
+    <input id="slider1" type="range" min="0" max="200" /> Move soccer ball along curve
+    </br>
+    <input id="slider2" type="range" min="0" max="100" /> Move camera around scene
+    <script type="text/javascript" src="gl-matrix-min.js"></script>
+    <script src="hw5.js" id="module"></script>
+  </body>
+</html>

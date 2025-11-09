@@ -1,0 +1,93 @@
+#ifdef VS 
+ 
+precision highp float;
+attribute vec3 position;
+attribute vec3 normal;
+uniform mat3 normalMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform float time;
+varying vec3 fNormal;
+varying vec3 fPosition;
+varying vec3 originalPos;
+varying float wave;
+
+const float PI = 3.14159;
+const float waveSpeed = 2.0;
+const float waveHeight = 0.3;
+const float waveDensity = 2.0;
+
+void main() {
+    originalPos = position;
+    
+    vec3 modifiedPosition = position;
+    wave = sin(waveDensity * position.x + waveSpeed * time) * 
+           cos(waveDensity * position.z + waveSpeed * time);
+    modifiedPosition.y += waveHeight * wave;
+    
+    vec3 modifiedNormal = normal;
+    float dx = waveDensity * waveHeight * cos(waveDensity * position.x + waveSpeed * time) *
+               cos(waveDensity * position.z + waveSpeed * time);
+    float dz = waveDensity * waveHeight * sin(waveDensity * position.x + waveSpeed * time) *
+               sin(waveDensity * position.z + waveSpeed * time);
+    modifiedNormal = normalize(vec3(-dx, 1.0, -dz));
+    
+    fNormal = normalize(normalMatrix * modifiedNormal);
+    vec4 pos = modelViewMatrix * vec4(modifiedPosition, 1.0);
+    fPosition = pos.xyz;
+    gl_Position = projectionMatrix * pos;
+}
+ 
+#else 
+ 
+precision highp float;
+uniform float time;
+varying vec3 fPosition;
+varying vec3 fNormal;
+varying vec3 originalPos;
+varying float wave;
+
+const vec3 light1Pos = vec3(2.0, 3.0, 2.0);
+const vec3 light2Pos = vec3(-2.0, 3.0, -2.0);
+const float ambientStrength = 0.3;
+const float diffuseStrength = 0.7;
+const float specularStrength = 0.8;
+const float shininess = 32.0;
+
+vec3 calculateLight(vec3 lightPos, vec3 baseColor, vec3 viewDir) {
+    vec3 actualLightPos = vec3(lightPos.x * cos(time), lightPos.y, lightPos.z * sin(time));
+    
+    vec3 lightDir = normalize(actualLightPos + fPosition);
+    vec3 normal = normalize(fNormal);
+    
+    vec3 ambient = ambientStrength * baseColor;
+    
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diffuseStrength * diff * baseColor;
+    
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specular = specularStrength * spec * vec3(1.0);
+    
+    return ambient + diffuse + specular;
+}
+
+void main() {
+    vec3 baseColor1 = vec3(0.3 * sin(time) +1.0, 0.4, 0.5);
+    vec3 baseColor2 = vec3(0.3, 0.4, 0.7 + 0.3 * cos(time));
+    vec3 baseColor = mix(baseColor1, baseColor2, wave * 0.5 + 0.5);
+    
+    vec3 viewDir = normalize(-fPosition);
+    
+    vec3 result = calculateLight(light1Pos, baseColor, viewDir) +
+                 calculateLight(light2Pos, baseColor, viewDir);
+    
+    float alpha = 1.0;
+    if (abs(wave) < 0.2) {
+        alpha = smoothstep(0.0, 0.2, abs(wave));
+    }
+    
+    gl_FragColor = vec4(result, alpha);
+}
+ 
+#endif

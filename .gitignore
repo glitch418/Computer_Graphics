@@ -1,0 +1,53 @@
+# Node modules (if any project uses npm)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE/editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# MacOS specific
+.AppleDouble
+.LSOverride
+
+# Backup files
+*~
+*.swp
+*.bak
+
+# Build outputs (if any)
+dist/
+build/
+out/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Python files (in case you add scripts)
+__pycache__/
+*.pyc
+
+# Text/Markdown specific
+*.pdf
+*.docx
+
+# Ignore images or large assets if you plan to fetch them online
+# Uncomment if needed
+# assets/
+# textures/
+# images/
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
